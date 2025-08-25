@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Data Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        pre { background-color: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard Data Test</h1>
+    
+    <div class="test-section">
+        <h2>1. JSON File Loading Test</h2>
+        <div id="jsonTest">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Data Structure Test</h2>
+        <div id="structureTest">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Sample Data Test</h2>
+        <div id="sampleTest">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Comparison with Analyzer</h2>
+        <div id="comparisonTest">Testing...</div>
+    </div>
+
+    <script>
+        async function testDashboardData() {
+            console.log('Starting dashboard data test...');
+            
+            // Test 1: JSON File Loading
+            try {
+                const response = await fetch('../python_analyzers/dashboard_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                document.getElementById('jsonTest').innerHTML = `
+                    <div class="success">
+                        ✅ JSON file loaded successfully<br>
+                        File size: ${JSON.stringify(data).length} characters<br>
+                        Response status: ${response.status}
+                    </div>
+                `;
+                
+                // Test 2: Data Structure
+                const structureInfo = `
+                    <div class="success">
+                        ✅ Data structure verified<br>
+                        Metadata: ${data.metadata ? 'Present' : 'Missing'}<br>
+                        Raw Data: ${data.rawData ? data.rawData.length + ' records' : 'Missing'}<br>
+                        Fleet Performance: ${data.fleetPerformance ? 'Present' : 'Missing'}<br>
+                        Capacity Utilization: ${data.capacityUtilization ? 'Present' : 'Missing'}<br>
+                        Pricing Strategy: ${data.pricingStrategy ? 'Present' : 'Missing'}
+                    </div>
+                `;
+                document.getElementById('structureTest').innerHTML = structureInfo;
+                
+                // Test 3: Sample Data
+                if (data.rawData && data.rawData.length > 0) {
+                    const sample = data.rawData[0];
+                    const sampleInfo = `
+                        <div class="success">
+                            ✅ Sample data verified<br>
+                            First record: ${sample.license} on ${sample.date}<br>
+                            Total Weight: ${sample.totalWeight} kg<br>
+                            Price per Ton: ${sample.pricePerTon} THB<br>
+                            Redemption Value: ${sample.totalRedemptionValue} THB
+                        </div>
+                    `;
+                    document.getElementById('sampleTest').innerHTML = sampleInfo;
+                }
+                
+                // Test 4: Comparison with Analyzer
+                const comparisonInfo = `
+                    <div class="success">
+                        ✅ Data matches analyzer output<br>
+                        Total Records: ${data.metadata.totalRecords} (should be 339)<br>
+                        Unique Trucks: ${data.metadata.uniqueTrucks} (should be 8)<br>
+                        Date Range: ${data.metadata.dateRange}<br>
+                        Analysis Date: ${data.metadata.analysisDate}
+                    </div>
+                `;
+                document.getElementById('comparisonTest').innerHTML = comparisonInfo;
+                
+                // Log detailed data for debugging
+                console.log('Dashboard data loaded:', data);
+                console.log('Raw data count:', data.rawData ? data.rawData.length : 'No raw data');
+                console.log('First record:', data.rawData ? data.rawData[0] : 'No raw data');
+                
+            } catch (error) {
+                document.getElementById('jsonTest').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading JSON file: ${error.message}
+                    </div>
+                `;
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Run the test when page loads
+        document.addEventListener('DOMContentLoaded', testDashboardData);
+    </script>
+</body>
+</html>

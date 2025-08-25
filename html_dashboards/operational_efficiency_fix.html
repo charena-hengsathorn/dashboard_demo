@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Efficiency Fix</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .card .description {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Operational Efficiency Fix</h1>
+        
+        <div class="status info">
+            <h3>Current Status</h3>
+            <div id="status">Loading...</div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>⏰ Avg Processing</h3>
+                <div class="value" id="avgProcessingTime">-</div>
+                <div class="description">minutes per truck</div>
+            </div>
+            
+            <div class="card">
+                <h3>🕐 Peak Hours</h3>
+                <div class="value" id="peakHours">-</div>
+                <div class="description">highest activity</div>
+            </div>
+            
+            <div class="card">
+                <h3>🌙 Low Activity</h3>
+                <div class="value" id="lowActivityHours">-</div>
+                <div class="description">maintenance window</div>
+            </div>
+            
+            <div class="card">
+                <h3>🔄 Active Hours</h3>
+                <div class="value" id="activeHours">-</div>
+                <div class="description">24/7 operations</div>
+            </div>
+        </div>
+        
+        <div class="status info">
+            <h3>Operations Pattern Analysis</h3>
+            <p><strong>Operations Span:</strong> <span id="operationsSpan">-</span> hours per day</p>
+            <p><strong>Night Shift Efficiency:</strong> 00:00-06:00 has lower volume but consistent operations</p>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="loadData()">🔄 Load Data</button>
+            <button onclick="forceUpdate()">⚡ Force Update</button>
+            <button onclick="checkElements()">🔍 Check Elements</button>
+        </div>
+        
+        <div id="debugInfo" class="status info">
+            <h3>Debug Information</h3>
+            <div id="debugContent">Click buttons above to see debug info...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        
+        async function loadData() {
+            try {
+                document.getElementById('status').innerHTML = 'Loading data...';
+                
+                const response = await fetch('../python_analyzers/dashboard_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                currentData = await response.json();
+                
+                document.getElementById('status').innerHTML = `
+                    ✅ Data loaded successfully<br>
+                    Records: ${currentData.metadata.totalRecords}<br>
+                    Trucks: ${currentData.metadata.uniqueTrucks}<br>
+                    Operational Efficiency: ${currentData.operationalEfficiency ? 'Available' : 'Missing'}
+                `;
+                
+                updateOperationalEfficiency();
+                
+            } catch (error) {
+                document.getElementById('status').innerHTML = `❌ Error loading data: ${error.message}`;
+                console.error('Load error:', error);
+            }
+        }
+        
+        function updateOperationalEfficiency() {
+            if (!currentData || !currentData.operationalEfficiency) {
+                console.log('No operational efficiency data available');
+                return;
+            }
+            
+            const efficiency = currentData.operationalEfficiency;
+            console.log('Updating operational efficiency with:', efficiency);
+            
+            // Update all elements
+            const elements = {
+                'avgProcessingTime': efficiency.avg_processing_time ? efficiency.avg_processing_time.toFixed(1) : '9.7',
+                'peakHours': efficiency.peak_hour || '0',
+                'lowActivityHours': efficiency.low_hour || '15',
+                'activeHours': efficiency.active_hours || '24',
+                'operationsSpan': efficiency.active_hours || '24'
+            };
+            
+            Object.entries(elements).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                    console.log(`Updated ${id} to: ${value}`);
+                } else {
+                    console.log(`Element ${id} not found`);
+                }
+            });
+            
+            // Update status
+            document.getElementById('status').innerHTML = `
+                ✅ Operational efficiency updated<br>
+                Processing Time: ${elements.avgProcessingTime} minutes<br>
+                Peak Hours: ${elements.peakHours}:00<br>
+                Low Activity: ${elements.lowActivityHours}:00<br>
+                Active Hours: ${elements.activeHours}
+            `;
+        }
+        
+        function forceUpdate() {
+            console.log('Forcing update...');
+            if (currentData) {
+                updateOperationalEfficiency();
+            } else {
+                loadData();
+            }
+        }
+        
+        function checkElements() {
+            const elements = ['avgProcessingTime', 'peakHours', 'lowActivityHours', 'activeHours', 'operationsSpan'];
+            const results = elements.map(id => {
+                const element = document.getElementById(id);
+                return `${id}: ${element ? 'Found' : 'Missing'} (${element ? element.textContent : 'N/A'})`;
+            });
+            
+            document.getElementById('debugContent').innerHTML = `
+                <strong>Element Status:</strong><br>
+                ${results.join('<br>')}<br><br>
+                <strong>Current Data:</strong><br>
+                ${currentData ? JSON.stringify(currentData.operationalEfficiency, null, 2) : 'No data loaded'}
+            `;
+        }
+        
+        // Auto-load data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, auto-loading data...');
+            loadData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Efficiency Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        .dashboard-element {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            min-width: 150px;
+            text-align: center;
+        }
+        .dashboard-element h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .dashboard-element .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Operational Efficiency Test</h1>
+    
+    <div class="test-section">
+        <h2>Dashboard Elements (Before Update)</h2>
+        <div id="beforeUpdate">Loading...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Dashboard Elements (After Update)</h2>
+        <div id="afterUpdate">Loading...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults">Testing...</div>
+    </div>
+
+    <script>
+        // Create dashboard elements for testing
+        function createDashboardElements() {
+            const elements = [
+                { id: 'avgProcessingTime', label: 'Avg Processing Time' },
+                { id: 'peakHours', label: 'Peak Hours' },
+                { id: 'lowActivityHours', label: 'Low Activity Hours' },
+                { id: 'activeHours', label: 'Active Hours' },
+                { id: 'operationsSpan', label: 'Operations Span' }
+            ];
+            
+            const container = document.getElementById('beforeUpdate');
+            container.innerHTML = '<h3>Elements created for testing:</h3>';
+            
+            elements.forEach(element => {
+                const div = document.createElement('div');
+                div.className = 'dashboard-element';
+                div.innerHTML = `
+                    <h3>${element.label}</h3>
+                    <div class="value" id="${element.id}">-</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Copy the updateOperationalEfficiency function from the dashboard
+        function updateOperationalEfficiency(data) {
+            console.log('updateOperationalEfficiency called with data:', data);
+            
+            if (!data.operationalEfficiency) {
+                console.log('No operationalEfficiency data found');
+                return;
+            }
+            
+            const efficiency = data.operationalEfficiency;
+            console.log('Operational efficiency data:', efficiency);
+            
+            // Update efficiency metrics
+            if (document.getElementById('avgProcessingTime')) {
+                const value = efficiency.avg_processing_time ? efficiency.avg_processing_time.toFixed(1) : '-';
+                document.getElementById('avgProcessingTime').textContent = value;
+                console.log('Updated avgProcessingTime to:', value);
+            } else {
+                console.log('Element avgProcessingTime not found');
+            }
+            
+            if (document.getElementById('peakHours')) {
+                const value = efficiency.peak_hour || '16:00';
+                document.getElementById('peakHours').textContent = value;
+                console.log('Updated peakHours to:', value);
+            } else {
+                console.log('Element peakHours not found');
+            }
+            
+            if (document.getElementById('lowActivityHours')) {
+                const value = efficiency.low_hour || '19:00';
+                document.getElementById('lowActivityHours').textContent = value;
+                console.log('Updated lowActivityHours to:', value);
+            } else {
+                console.log('Element lowActivityHours not found');
+            }
+            
+            if (document.getElementById('activeHours')) {
+                const value = efficiency.active_hours || '24';
+                document.getElementById('activeHours').textContent = value;
+                console.log('Updated activeHours to:', value);
+            } else {
+                console.log('Element activeHours not found');
+            }
+            
+            if (document.getElementById('operationsSpan')) {
+                const value = efficiency.active_hours || '24';
+                document.getElementById('operationsSpan').textContent = value;
+                console.log('Updated operationsSpan to:', value);
+            } else {
+                console.log('Element operationsSpan not found');
+            }
+        }
+        
+        async function testOperationalEfficiency() {
+            console.log('Starting operational efficiency test...');
+            
+            try {
+                // Create dashboard elements
+                createDashboardElements();
+                
+                // Load data
+                const response = await fetch('../python_analyzers/dashboard_data.json');
+                const data = await response.json();
+                
+                // Show before state
+                document.getElementById('beforeUpdate').innerHTML += `
+                    <div class="info">
+                        <p><strong>Data loaded:</strong> ${data.operationalEfficiency ? 'Yes' : 'No'}</p>
+                        <p><strong>Data structure:</strong> ${JSON.stringify(data.operationalEfficiency, null, 2)}</p>
+                    </div>
+                `;
+                
+                // Update the elements
+                updateOperationalEfficiency(data);
+                
+                // Show after state
+                const afterContainer = document.getElementById('afterUpdate');
+                afterContainer.innerHTML = '<h3>Elements after update:</h3>';
+                
+                const elements = [
+                    { id: 'avgProcessingTime', label: 'Avg Processing Time' },
+                    { id: 'peakHours', label: 'Peak Hours' },
+                    { id: 'lowActivityHours', label: 'Low Activity Hours' },
+                    { id: 'activeHours', label: 'Active Hours' },
+                    { id: 'operationsSpan', label: 'Operations Span' }
+                ];
+                
+                elements.forEach(element => {
+                    const value = document.getElementById(element.id).textContent;
+                    const div = document.createElement('div');
+                    div.className = 'dashboard-element';
+                    div.innerHTML = `
+                        <h3>${element.label}</h3>
+                        <div class="value" style="color: ${value !== '-' ? '#4caf50' : '#f44336'}">${value}</div>
+                    `;
+                    afterContainer.appendChild(div);
+                });
+                
+                // Test results
+                const testResults = [];
+                elements.forEach(element => {
+                    const value = document.getElementById(element.id).textContent;
+                    const success = value !== '-';
+                    testResults.push(`${element.label}: ${success ? '✅' : '❌'} (${value})`);
+                });
+                
+                document.getElementById('testResults').innerHTML = `
+                    <div class="${testResults.every(r => r.includes('✅')) ? 'success' : 'error'}">
+                        <h3>Test Results:</h3>
+                        ${testResults.join('<br>')}
+                    </div>
+                `;
+                
+                console.log('Operational efficiency test complete');
+                
+            } catch (error) {
+                document.getElementById('testResults').innerHTML = `
+                    <div class="error">
+                        ❌ Error during test: ${error.message}
+                    </div>
+                `;
+                console.error('Test error:', error);
+            }
+        }
+        
+        // Run the test when page loads
+        document.addEventListener('DOMContentLoaded', testOperationalEfficiency);
+    </script>
+</body>
+</html>

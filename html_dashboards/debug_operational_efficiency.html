@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Efficiency Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        pre { background-color: #f8f9fa; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Operational Efficiency Debug</h1>
+    
+    <div class="debug-section">
+        <h2>1. Raw Data Test</h2>
+        <div id="rawDataTest">Loading...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. Function Test</h2>
+        <div id="functionTest">Testing...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. Element Test</h2>
+        <div id="elementTest">Testing...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>4. Simulated Dashboard</h2>
+        <div id="simulatedDashboard">Testing...</div>
+    </div>
+
+    <script>
+        async function debugOperationalEfficiency() {
+            console.log('Starting operational efficiency debug...');
+            
+            try {
+                // Test 1: Load raw data
+                const response = await fetch('../python_analyzers/dashboard_data.json');
+                const data = await response.json();
+                
+                document.getElementById('rawDataTest').innerHTML = `
+                    <div class="success">
+                        ✅ JSON data loaded successfully<br>
+                        operationalEfficiency exists: ${data.operationalEfficiency ? 'Yes' : 'No'}<br>
+                        operationalEfficiency data: <pre>${JSON.stringify(data.operationalEfficiency, null, 2)}</pre>
+                    </div>
+                `;
+                
+                // Test 2: Test the update function
+                const efficiency = data.operationalEfficiency;
+                const testResults = [];
+                
+                testResults.push(`avg_processing_time: ${efficiency.avg_processing_time} (${typeof efficiency.avg_processing_time})`);
+                testResults.push(`peak_hour: ${efficiency.peak_hour} (${typeof efficiency.peak_hour})`);
+                testResults.push(`low_hour: ${efficiency.low_hour} (${typeof efficiency.low_hour})`);
+                testResults.push(`active_hours: ${efficiency.active_hours} (${typeof efficiency.active_hours})`);
+                
+                document.getElementById('functionTest').innerHTML = `
+                    <div class="success">
+                        ✅ Function data analysis:<br>
+                        <pre>${testResults.join('\n')}</pre>
+                    </div>
+                `;
+                
+                // Test 3: Test element creation
+                const testElement = document.createElement('div');
+                testElement.id = 'testAvgProcessingTime';
+                testElement.textContent = 'Test Value';
+                document.body.appendChild(testElement);
+                
+                const elementFound = document.getElementById('testAvgProcessingTime');
+                document.getElementById('elementTest').innerHTML = `
+                    <div class="success">
+                        ✅ Element manipulation test:<br>
+                        Element created: ${testElement ? 'Yes' : 'No'}<br>
+                        Element found: ${elementFound ? 'Yes' : 'No'}<br>
+                        Element text: ${elementFound ? elementFound.textContent : 'N/A'}
+                    </div>
+                `;
+                
+                // Test 4: Simulate dashboard update
+                const simulatedUpdate = `
+                    <div class="info">
+                        <h3>Simulated Dashboard Update:</h3>
+                        <p><strong>Avg Processing Time:</strong> ${efficiency.avg_processing_time ? efficiency.avg_processing_time.toFixed(1) : '-'} minutes</p>
+                        <p><strong>Peak Hours:</strong> ${efficiency.peak_hour || '-'} (${efficiency.peak_hour ? efficiency.peak_hour + ':00' : '-'})</p>
+                        <p><strong>Low Activity:</strong> ${efficiency.low_hour || '-'} (${efficiency.low_hour ? efficiency.low_hour + ':00' : '-'})</p>
+                        <p><strong>Active Hours:</strong> ${efficiency.active_hours || '-'} hours</p>
+                        <p><strong>Operations Span:</strong> ${efficiency.active_hours || '-'} hours per day</p>
+                    </div>
+                `;
+                document.getElementById('simulatedDashboard').innerHTML = simulatedUpdate;
+                
+                // Test 5: Check if the actual dashboard elements exist
+                const dashboardElements = [
+                    'avgProcessingTime',
+                    'peakHours', 
+                    'lowActivityHours',
+                    'activeHours',
+                    'operationsSpan'
+                ];
+                
+                const elementStatus = dashboardElements.map(id => {
+            const element = document.getElementById(id);
+            return `${id}: ${element ? 'Found' : 'Missing'}`;
+        }).join('<br>');
+                
+                document.getElementById('elementTest').innerHTML += `
+                    <div class="info">
+                        <h3>Dashboard Element Status:</h3>
+                        ${elementStatus}
+                    </div>
+                `;
+                
+                console.log('Operational efficiency debug complete');
+                console.log('Efficiency data:', efficiency);
+                
+            } catch (error) {
+                document.getElementById('rawDataTest').innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+                console.error('Debug error:', error);
+            }
+        }
+        
+        // Run the debug when page loads
+        document.addEventListener('DOMContentLoaded', debugOperationalEfficiency);
+    </script>
+</body>
+</html>

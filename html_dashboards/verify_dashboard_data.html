@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Data Verification</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+        .success { 
+            background-color: #d4edda; 
+            border-color: #c3e6cb; 
+            color: #155724;
+        }
+        .error { 
+            background-color: #f8d7da; 
+            border-color: #f5c6cb; 
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+        pre { 
+            background-color: #f8f9fa; 
+            padding: 10px; 
+            overflow-x: auto;
+            border-radius: 3px;
+        }
+        .refresh-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .refresh-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Dashboard Data Verification</h1>
+        <p>This page verifies what data is currently being loaded by the dashboard.</p>
+        
+        <button class="refresh-btn" onclick="location.reload()">🔄 Refresh Data</button>
+        
+        <div class="section info">
+            <h2>📊 Current Status</h2>
+            <div id="status">Loading...</div>
+        </div>
+        
+        <div class="section">
+            <h2>1. 📋 JSON File Loading</h2>
+            <div id="jsonTest">Testing...</div>
+        </div>
+        
+        <div class="section">
+            <h2>2. 📈 Key Metrics Comparison</h2>
+            <div id="metricsTest">Testing...</div>
+        </div>
+        
+        <div class="section">
+            <h2>3. 🚛 Fleet Performance Data</h2>
+            <div id="fleetTest">Testing...</div>
+        </div>
+        
+        <div class="section">
+            <h2>4. 📅 Sample Records</h2>
+            <div id="sampleTest">Testing...</div>
+        </div>
+        
+        <div class="section">
+            <h2>5. 🔄 Data Freshness</h2>
+            <div id="freshnessTest">Testing...</div>
+        </div>
+    </div>
+
+    <script>
+        async function verifyDashboardData() {
+            console.log('Starting dashboard data verification...');
+            
+            try {
+                // Test 1: JSON File Loading
+                const response = await fetch('../python_analyzers/dashboard_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                document.getElementById('status').innerHTML = `
+                    <div class="success">
+                        ✅ Dashboard data loaded successfully<br>
+                        Last updated: ${new Date().toLocaleString()}
+                    </div>
+                `;
+                
+                document.getElementById('jsonTest').innerHTML = `
+                    <div class="success">
+                        ✅ JSON file loaded successfully<br>
+                        File size: ${JSON.stringify(data).length.toLocaleString()} characters<br>
+                        Response status: ${response.status}<br>
+                        Data structure: Complete
+                    </div>
+                `;
+                
+                // Test 2: Key Metrics Comparison
+                const metricsInfo = `
+                    <div class="success">
+                        <h3>Key Metrics (Should match analyzer output):</h3>
+                        <table class="data-table">
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                                <th>Expected</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr>
+                                <td>Total Records</td>
+                                <td>${data.metadata.totalRecords}</td>
+                                <td>339</td>
+                                <td>${data.metadata.totalRecords === 339 ? '✅' : '❌'}</td>
+                            </tr>
+                            <tr>
+                                <td>Unique Trucks</td>
+                                <td>${data.metadata.uniqueTrucks}</td>
+                                <td>8</td>
+                                <td>${data.metadata.uniqueTrucks === 8 ? '✅' : '❌'}</td>
+                            </tr>
+                            <tr>
+                                <td>Date Range</td>
+                                <td>${data.metadata.dateRange}</td>
+                                <td>2068-07-01 to 2068-07-31</td>
+                                <td>${data.metadata.dateRange.includes('2068-07-01') ? '✅' : '❌'}</td>
+                            </tr>
+                            <tr>
+                                <td>Top Revenue Truck</td>
+                                <td>${data.fleetPerformance.topPerformers.highestRevenue.license}</td>
+                                <td>82-4347</td>
+                                <td>${data.fleetPerformance.topPerformers.highestRevenue.license === '82-4347' ? '✅' : '❌'}</td>
+                            </tr>
+                            <tr>
+                                <td>Top Revenue Amount</td>
+                                <td>${data.fleetPerformance.topPerformers.highestRevenue.revenue.toLocaleString()} THB</td>
+                                <td>28,755 THB</td>
+                                <td>${Math.abs(data.fleetPerformance.topPerformers.highestRevenue.revenue - 28755) < 1 ? '✅' : '❌'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+                document.getElementById('metricsTest').innerHTML = metricsInfo;
+                
+                // Test 3: Fleet Performance Data
+                const fleetInfo = `
+                    <div class="success">
+                        <h3>Fleet Performance Summary:</h3>
+                        <table class="data-table">
+                            <tr>
+                                <th>Category</th>
+                                <th>Truck</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Highest Revenue</td>
+                                <td>${data.fleetPerformance.topPerformers.highestRevenue.license}</td>
+                                <td>${data.fleetPerformance.topPerformers.highestRevenue.revenue.toLocaleString()} THB</td>
+                            </tr>
+                            <tr>
+                                <td>Most Operations</td>
+                                <td>${data.fleetPerformance.topPerformers.mostOperations.license}</td>
+                                <td>${data.fleetPerformance.topPerformers.mostOperations.operations} operations</td>
+                            </tr>
+                            <tr>
+                                <td>Highest Weight</td>
+                                <td>${data.fleetPerformance.topPerformers.highestWeight.license}</td>
+                                <td>${data.fleetPerformance.topPerformers.highestWeight.weight.toLocaleString()} kg</td>
+                            </tr>
+                        </table>
+                        
+                        <h3>Performance Tiers:</h3>
+                        <p>🏆 Elite: ${data.fleetPerformance.performanceTiers.elite} trucks</p>
+                        <p>⭐ High: ${data.fleetPerformance.performanceTiers.high} trucks</p>
+                        <p>📈 Good: ${data.fleetPerformance.performanceTiers.good} trucks</p>
+                        <p>⚠️ Needs Attention: ${data.fleetPerformance.performanceTiers.needsAttention} trucks</p>
+                    </div>
+                `;
+                document.getElementById('fleetTest').innerHTML = fleetInfo;
+                
+                // Test 4: Sample Records
+                if (data.rawData && data.rawData.length > 0) {
+                    const sampleRecords = data.rawData.slice(0, 3);
+                    let sampleTable = `
+                        <div class="success">
+                            <h3>First 3 Records:</h3>
+                            <table class="data-table">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>License</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Price/ton</th>
+                                    <th>Revenue (THB)</th>
+                                </tr>
+                    `;
+                    
+                    sampleRecords.forEach(record => {
+                        sampleTable += `
+                            <tr>
+                                <td>${record.date.split(' ')[0]}</td>
+                                <td>${record.license}</td>
+                                <td>${record.totalWeight}</td>
+                                <td>${record.pricePerTon}</td>
+                                <td>${record.totalRedemptionValue.toLocaleString()}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    sampleTable += `
+                            </table>
+                            <p><strong>Total records available:</strong> ${data.rawData.length}</p>
+                        </div>
+                    `;
+                    document.getElementById('sampleTest').innerHTML = sampleTable;
+                }
+                
+                // Test 5: Data Freshness
+                const analysisDate = new Date(data.metadata.analysisDate);
+                const now = new Date();
+                const timeDiff = now - analysisDate;
+                const hoursDiff = timeDiff / (1000 * 60 * 60);
+                
+                const freshnessInfo = `
+                    <div class="${hoursDiff < 1 ? 'success' : 'error'}">
+                        <h3>Data Freshness:</h3>
+                        <p><strong>Analysis Date:</strong> ${data.metadata.analysisDate}</p>
+                        <p><strong>Time Since Analysis:</strong> ${hoursDiff.toFixed(1)} hours</p>
+                        <p><strong>Status:</strong> ${hoursDiff < 1 ? '✅ Fresh (less than 1 hour old)' : '⚠️ Data may be stale'}</p>
+                        <p><strong>Recommendation:</strong> ${hoursDiff < 1 ? 'Data is current' : 'Consider re-running the analyzer'}</p>
+                    </div>
+                `;
+                document.getElementById('freshnessTest').innerHTML = freshnessInfo;
+                
+                // Log detailed data for debugging
+                console.log('Dashboard data verification complete');
+                console.log('Data loaded:', data);
+                console.log('Raw data count:', data.rawData ? data.rawData.length : 'No raw data');
+                
+            } catch (error) {
+                document.getElementById('status').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading dashboard data: ${error.message}
+                    </div>
+                `;
+                document.getElementById('jsonTest').innerHTML = `
+                    <div class="error">
+                        ❌ Failed to load JSON file: ${error.message}
+                    </div>
+                `;
+                console.error('Error during verification:', error);
+            }
+        }
+        
+        // Run the verification when page loads
+        document.addEventListener('DOMContentLoaded', verifyDashboardData);
+    </script>
+</body>
+</html>

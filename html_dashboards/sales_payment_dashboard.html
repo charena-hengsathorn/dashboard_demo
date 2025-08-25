@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales & Payment Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .nav-bar a {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            color: #2980b9;
+        }
+
+        .nav-bar a.active {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #27ae60;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .table-container {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            background: white;
+            min-width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th:first-child {
+            text-align: center;
+            padding-left: 20px;
+        }
+
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.9rem;
+        }
+
+        td:first-child {
+            text-align: center;
+            padding-left: 20px;
+            font-weight: 500;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .number-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .status-cell {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .payment-method {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .payment-transfer {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .payment-cash {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .payment-mixed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* Form Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .form-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group input:disabled {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        /* Order Display */
+        .order-display {
+            background: #3498db;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Currency Input */
+        .input-with-symbol {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .input-with-symbol input {
+            padding-left: 35px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        /* Payment Method Options */
+        .payment-method-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-option:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-option input[type="checkbox"]:checked + .checkbox-custom {
+            border-color: #3498db;
+            background: #3498db;
+        }
+
+        .checkbox-option input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Validation Message */
+        .validation-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .validation-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .validation-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Summary Card Styles */
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .summary-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .summary-period {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .summary-table-container {
+            padding: 25px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .summary-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .summary-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 1rem;
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table .amount {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-align: right;
+            font-size: 1.1rem;
+        }
+
+        .summary-table .transfer {
+            color: #0c5460;
+        }
+
+        .summary-table .cash {
+            color: #856404;
+        }
+
+        .summary-table .total {
+            color: #155724;
+            font-size: 1.2rem;
+        }
+
+        .summary-table .total-row {
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .summary-table .total-row td {
+            font-weight: 600;
+        }
+
+        .summary-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .modal-content {
+                margin: 5% auto;
+                width: 95%;
+            }
+
+            .summary-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .summary-table th,
+            .summary-table td {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+
+            .summary-table .amount {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Sales & Payment Dashboard</h1>
+            <p>Daily sales log with payment tracking and financial analysis</p>
+        </div>
+
+        <div class="nav-bar">
+            <a href="index.html">🏠 Home</a>
+            <a href="thai_truck_dashboard.html">🚛 Truck Analysis</a>
+            <a href="recycled_items_dashboard.html">🔄 Recycled Items</a>
+            <a href="sales_payment_dashboard.html" class="active">💰 Sales & Payments</a>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Total Sales</h3>
+                <div class="value" id="totalSales">฿0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Transfers</h3>
+                <div class="value" id="totalTransfers">฿0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Cash</h3>
+                <div class="value" id="totalCash">฿0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Transactions</h3>
+                <div class="value" id="totalTransactions">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2>📊 Daily Sales & Payment Log</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="openAddEntryModal()">📝 Add Entry</button>
+                    <button class="btn btn-success" onclick="exportToExcel()">📥 Export Excel</button>
+                    <button class="btn btn-warning" onclick="calculateTotals()">🧮 Calculate Totals</button>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="monthFilter">📅 Month:</label>
+                    <select id="monthFilter" onchange="filterData()">
+                        <option value="">All Months</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="shopFilter">🏪 Shop/Customer:</label>
+                    <select id="shopFilter" onchange="filterData()">
+                        <option value="">All Shops</option>
+                        <option value="บจก. ซีโนไทย มารีน โปรดักส์">บจก. ซีโนไทย มารีน โปรดักส์</option>
+                        <option value="บจก. ซัมมารี่ ทอทอล">บจก. ซัมมารี่ ทอทอล</option>
+                        <option value="ทองพูน">ทองพูน</option>
+                        <option value="ร้านพันท้ายค้าเหล็ก">ร้านพันท้ายค้าเหล็ก</option>
+                        <option value="เมืองไทยสตีล">เมืองไทยสตีล</option>
+                        <option value="ไม่ทราบชื่อร้าน">ไม่ทราบชื่อร้าน</option>
+                        <option value="วัลลพ น้ำมันเก่า">วัลลพ น้ำมันเก่า</option>
+                        <option value="CN รีไซเคิล">CN รีไซเคิล</option>
+                        <option value="ไทยพลาสติกรีไซรีเคิลกรุป 00003">ไทยพลาสติกรีไซรีเคิลกรุป 00003</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="paymentFilter">💳 Payment Method:</label>
+                    <select id="paymentFilter" onchange="filterData()">
+                        <option value="">All Methods</option>
+                        <option value="transfer">Transfer Only</option>
+                        <option value="cash">Cash Only</option>
+                        <option value="mixed">Mixed Payment</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-secondary" onclick="clearFilters()">🔄 Clear Filters</button>
+                </div>
+            </div>
+
+            <div id="tableContent">
+                <div class="loading">Loading table...</div>
+            </div>
+        </div>
+
+        <!-- Add Entry Modal -->
+        <div id="addEntryModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📝 Add Sales Entry</h2>
+                    <span class="close" onclick="closeAddEntryModal()">&times;</span>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <!-- Left Column -->
+                        <div class="form-section">
+                            <h3>📋 Entry Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="orderNumber">ลำดับ (Order):</label>
+                                <div class="order-display" id="orderNumber">1</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="entryDate">วันที่ (Date):</label>
+                                <input type="datetime-local" id="entryDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="entryCustomer">ร้านค้า (Shop/Customer):</label>
+                                <select id="entryCustomer" required>
+                                    <option value="">Select Customer</option>
+                                    <option value="บจก. ซีโนไทย มารีน โปรดักส์">บจก. ซีโนไทย มารีน โปรดักส์</option>
+                                    <option value="บจก. ซัมมารี่ ทอทอล">บจก. ซัมมารี่ ทอทอล</option>
+                                    <option value="ทองพูน">ทองพูน</option>
+                                    <option value="ร้านพันท้ายค้าเหล็ก">ร้านพันท้ายค้าเหล็ก</option>
+                                    <option value="เมืองไทยสตีล">เมืองไทยสตีล</option>
+                                    <option value="ไม่ทราบชื่อร้าน">ไม่ทราบชื่อร้าน</option>
+                                    <option value="วัลลพ น้ำมันเก่า">วัลลพ น้ำมันเก่า</option>
+                                    <option value="CN รีไซเคิล">CN รีไซเคิล</option>
+                                    <option value="ไทยพลาสติกรีไซรีเคิลกรุป 00003">ไทยพลาสติกรีไซรีเคิลกรุป 00003</option>
+                                    <option value="new">➕ Add New Customer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="newCustomerGroup" style="display: none;">
+                                <label for="newCustomerName">New Customer Name:</label>
+                                <input type="text" id="newCustomerName" placeholder="Enter customer name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="salesAmount">เงินขาย (Sales Amount):</label>
+                                <div class="input-with-symbol">
+                                    <span class="currency-symbol">฿</span>
+                                    <input type="number" id="salesAmount" min="0" step="0.01" placeholder="0.00" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="form-section">
+                            <h3>💳 Payment Details</h3>
+                            
+                            <div class="form-group">
+                                <label>Payment Method:</label>
+                                <div class="payment-method-options">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" id="useTransfer" onchange="updatePaymentFields()">
+                                        <span class="checkbox-custom"></span>
+                                        💳 Transfer Payment
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" id="useCash" onchange="updatePaymentFields()">
+                                        <span class="checkbox-custom"></span>
+                                        💰 Cash Payment
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" id="transferGroup" style="display: none;">
+                                <label for="transferAmount">เงินโอน (Transfer Amount):</label>
+                                <div class="input-with-symbol">
+                                    <span class="currency-symbol">฿</span>
+                                    <input type="number" id="transferAmount" min="0" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" id="cashGroup" style="display: none;">
+                                <label for="cashAmount">เงินสด (Cash Amount):</label>
+                                <div class="input-with-symbol">
+                                    <span class="currency-symbol">฿</span>
+                                    <input type="number" id="cashAmount" min="0" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="transferStatus">สถานะโอนเงิน (Transfer Status):</label>
+                                <select id="transferStatus">
+                                    <option value="รับเงินแล้ว">รับเงินแล้ว (Received)</option>
+                                    <option value="รอการโอน">รอการโอน (Pending)</option>
+                                    <option value="ยกเลิก">ยกเลิก (Cancelled)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="validation-message" id="validationMessage"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeAddEntryModal()">❌ Cancel</button>
+                    <button class="btn btn-success" onclick="submitSalesEntry()">✅ Submit Entry</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Summary Report -->
+        <div class="summary-card">
+            <div class="summary-header">
+                <h3>📊 Monthly Summary Report</h3>
+                <div class="summary-period">
+                    <span>📅 July 2025</span>
+                </div>
+            </div>
+            
+            <div class="summary-table-container">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>รายการ</th>
+                            <th>จำนวนเงิน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ทั้งหมด</td>
+                            <td class="amount">฿596,291.80</td>
+                        </tr>
+                        <tr>
+                            <td>โอนแล้ว</td>
+                            <td class="amount transfer">฿464,607.80</td>
+                        </tr>
+                        <tr>
+                            <td>รับเงินสด</td>
+                            <td class="amount cash">฿131,684.00</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>รวม</td>
+                            <td class="amount total">฿596,291.80</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data structure based on the table
+        const salesPaymentData = {
+            headers: [
+                "ลำดับ (Order)",
+                "วันที่ (Date)",
+                "ร้านค้า (Shop/Customer)",
+                "เงินขาย (Sales Amount)",
+                "เงินโอน (Transfer Amount)",
+                "เงินสด (Cash Amount)",
+                "สถานะโอนเงิน (Transfer Status)"
+            ],
+            sampleData: [
+                {
+                    order: 1,
+                    date: "1 ก.ค. 11",
+                    shop: "บจก. ซีโนไทย มารีน โปรดักส์",
+                    salesAmount: 6900.00,
+                    transferAmount: 6900.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 2,
+                    date: "2 ก.ค. 11",
+                    shop: "บจก. ซัมมารี่ ทอทอล",
+                    salesAmount: 17490.00,
+                    transferAmount: 17490.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 3,
+                    date: "3 ก.ค. 11",
+                    shop: "ทองพูน",
+                    salesAmount: 38863.12,
+                    transferAmount: 0.00,
+                    cashAmount: 38863.12,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 4,
+                    date: "4 ก.ค. 11",
+                    shop: "ร้านพันท้ายค้าเหล็ก",
+                    salesAmount: 5984.00,
+                    transferAmount: 0.00,
+                    cashAmount: 5984.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 5,
+                    date: "5 ก.ค. 11",
+                    shop: "เมืองไทยสตีล",
+                    salesAmount: 15630.00,
+                    transferAmount: 21846.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 6,
+                    date: "6 ก.ค. 11",
+                    shop: "ไม่ทราบชื่อร้าน",
+                    salesAmount: 12500.00,
+                    transferAmount: 12500.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 7,
+                    date: "7 ก.ค. 11",
+                    shop: "วัลลพ น้ำมันเก่า",
+                    salesAmount: 8900.00,
+                    transferAmount: 0.00,
+                    cashAmount: 8900.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 8,
+                    date: "8 ก.ค. 11",
+                    shop: "CN รีไซเคิล",
+                    salesAmount: 23450.00,
+                    transferAmount: 23450.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 9,
+                    date: "9 ก.ค. 11",
+                    shop: "ไทยพลาสติกรีไซรีเคิลกรุป 00003",
+                    salesAmount: 15670.00,
+                    transferAmount: 15670.00,
+                    cashAmount: 0.00,
+                    transferStatus: "รับเงินแล้ว"
+                },
+                {
+                    order: 10,
+                    date: "10 ก.ค. 11",
+                    shop: "บจก. ซีโนไทย มารีน โปรดักส์",
+                    salesAmount: 12340.00,
+                    transferAmount: 0.00,
+                    cashAmount: 12340.00,
+                    transferStatus: "รับเงินแล้ว"
+                }
+            ]
+        };
+
+        function initializeDashboard() {
+            renderTable();
+            updateStats(salesPaymentData.sampleData);
+        }
+
+        function renderTable(filteredData = null) {
+            const tableContent = document.getElementById('tableContent');
+            const dataToRender = filteredData || salesPaymentData.sampleData;
+            
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            ${salesPaymentData.headers.map(header => `<th>${header}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Add data rows
+            dataToRender.forEach(row => {
+                const paymentMethod = getPaymentMethod(row.transferAmount, row.cashAmount);
+                tableHTML += `
+                    <tr>
+                        <td>${row.order}</td>
+                        <td>${row.date}</td>
+                        <td>${row.shop}</td>
+                        <td class="number-cell">฿${row.salesAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td class="number-cell">${row.transferAmount > 0 ? '฿' + row.transferAmount.toLocaleString('en-US', {minimumFractionDigits: 2}) : '-'}</td>
+                        <td class="number-cell">${row.cashAmount > 0 ? '฿' + row.cashAmount.toLocaleString('en-US', {minimumFractionDigits: 2}) : '-'}</td>
+                        <td><span class="status-cell">${row.transferStatus}</span></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            tableContent.innerHTML = tableHTML;
+        }
+
+        function getPaymentMethod(transferAmount, cashAmount) {
+            if (transferAmount > 0 && cashAmount > 0) return 'mixed';
+            if (transferAmount > 0) return 'transfer';
+            if (cashAmount > 0) return 'cash';
+            return 'none';
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('tbody tr');
+            let totalSales = 0;
+            let totalTransfers = 0;
+            let totalCash = 0;
+            let totalTransactions = rows.length;
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const salesText = cells[3].textContent.replace('฿', '').replace(',', '');
+                const transferText = cells[4].textContent.replace('฿', '').replace(',', '');
+                const cashText = cells[5].textContent.replace('฿', '').replace(',', '');
+                
+                totalSales += parseFloat(salesText) || 0;
+                totalTransfers += parseFloat(transferText) || 0;
+                totalCash += parseFloat(cashText) || 0;
+            });
+
+            document.getElementById('totalSales').textContent = `฿${totalSales.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalTransfers').textContent = `฿${totalTransfers.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalCash').textContent = `฿${totalCash.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+        }
+
+        function filterData() {
+            const monthFilter = document.getElementById('monthFilter').value;
+            const shopFilter = document.getElementById('shopFilter').value;
+            const paymentFilter = document.getElementById('paymentFilter').value;
+            
+            let filteredData = salesPaymentData.sampleData;
+            
+            // Filter by month
+            if (monthFilter) {
+                filteredData = filteredData.filter(row => {
+                    const rowMonth = row.date.split(' ')[1]; // Extract month from "DD ก.ค. YY"
+                    return rowMonth === 'ก.ค.' && monthFilter === '07'; // Simplified for July
+                });
+            }
+            
+            // Filter by shop
+            if (shopFilter) {
+                filteredData = filteredData.filter(row => {
+                    return row.shop === shopFilter;
+                });
+            }
+            
+            // Filter by payment method
+            if (paymentFilter) {
+                filteredData = filteredData.filter(row => {
+                    const method = getPaymentMethod(row.transferAmount, row.cashAmount);
+                    return method === paymentFilter;
+                });
+            }
+            
+            // Render filtered table
+            renderTable(filteredData);
+            
+            // Update stats with filtered data
+            updateStats(filteredData);
+        }
+
+        function clearFilters() {
+            document.getElementById('monthFilter').value = '';
+            document.getElementById('shopFilter').value = '';
+            document.getElementById('paymentFilter').value = '';
+            renderTable();
+            calculateTotals();
+        }
+
+        function updateStats(data) {
+            let totalSales = 0;
+            let totalTransfers = 0;
+            let totalCash = 0;
+            let totalTransactions = data.length;
+
+            data.forEach(row => {
+                totalSales += row.salesAmount;
+                totalTransfers += row.transferAmount;
+                totalCash += row.cashAmount;
+            });
+
+            document.getElementById('totalSales').textContent = `฿${totalSales.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalTransfers').textContent = `฿${totalTransfers.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalCash').textContent = `฿${totalCash.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            
+            // Update summary report
+            updateSummaryReport(totalSales, totalTransfers, totalCash);
+        }
+
+        function updateSummaryReport(totalSales, totalTransfers, totalCash) {
+            const summaryTable = document.querySelector('.summary-table tbody');
+            if (summaryTable) {
+                summaryTable.innerHTML = `
+                    <tr>
+                        <td>ทั้งหมด</td>
+                        <td class="amount">฿${totalSales.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                    <tr>
+                        <td>โอนแล้ว</td>
+                        <td class="amount transfer">฿${totalTransfers.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                    <tr>
+                        <td>รับเงินสด</td>
+                        <td class="amount cash">฿${totalCash.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>รวม</td>
+                        <td class="amount total">฿${totalSales.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function openAddEntryModal() {
+            const modal = document.getElementById('addEntryModal');
+            modal.style.display = 'block';
+            
+            // Set default date to today
+            const today = new Date();
+            const dateString = today.toISOString().slice(0, 16);
+            document.getElementById('entryDate').value = dateString;
+            
+            // Clear previous entries
+            document.getElementById('entryCustomer').value = '';
+            document.getElementById('salesAmount').value = '';
+            document.getElementById('transferAmount').value = '';
+            document.getElementById('cashAmount').value = '';
+            
+            // Reset payment method
+            document.getElementById('useTransfer').checked = false;
+            document.getElementById('useCash').checked = false;
+            
+            // Update order number
+            const nextOrder = salesPaymentData.sampleData.length + 1;
+            document.getElementById('orderNumber').textContent = nextOrder;
+            
+            // Hide new customer group
+            document.getElementById('newCustomerGroup').style.display = 'none';
+            
+            // Clear validation message
+            document.getElementById('validationMessage').innerHTML = '';
+            document.getElementById('validationMessage').className = 'validation-message';
+            
+            // Hide payment fields initially
+            document.getElementById('transferGroup').style.display = 'none';
+            document.getElementById('cashGroup').style.display = 'none';
+        }
+
+        function closeAddEntryModal() {
+            const modal = document.getElementById('addEntryModal');
+            modal.style.display = 'none';
+        }
+
+        function updatePaymentFields() {
+            const useTransfer = document.getElementById('useTransfer').checked;
+            const useCash = document.getElementById('useCash').checked;
+            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+            const transferGroup = document.getElementById('transferGroup');
+            const cashGroup = document.getElementById('cashGroup');
+            const transferInput = document.getElementById('transferAmount');
+            const cashInput = document.getElementById('cashAmount');
+            
+            // Show/hide payment fields based on checkboxes
+            transferGroup.style.display = useTransfer ? 'block' : 'none';
+            cashGroup.style.display = useCash ? 'block' : 'none';
+            
+            // Clear values when unchecked
+            if (!useTransfer) {
+                transferInput.value = '';
+            }
+            if (!useCash) {
+                cashInput.value = '';
+            }
+            
+            // Auto-fill amounts if only one payment method is selected
+            if (useTransfer && !useCash && salesAmount > 0) {
+                transferInput.value = salesAmount.toFixed(2);
+                cashInput.value = '';
+            } else if (useCash && !useTransfer && salesAmount > 0) {
+                cashInput.value = salesAmount.toFixed(2);
+                transferInput.value = '';
+            }
+            
+            validatePaymentAmounts();
+        }
+
+        function validatePaymentAmounts() {
+            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+            const transferAmount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
+            const validationMessage = document.getElementById('validationMessage');
+            
+            if (salesAmount > 0) {
+                const total = transferAmount + cashAmount;
+                const difference = Math.abs(total - salesAmount);
+                
+                if (difference < 0.01) { // Allow for small rounding differences
+                    validationMessage.innerHTML = '✅ Payment amounts match sales amount';
+                    validationMessage.className = 'validation-message success';
+                } else {
+                    validationMessage.innerHTML = `⚠️ Payment amounts (฿${total.toFixed(2)}) don't match sales amount (฿${salesAmount.toFixed(2)})`;
+                    validationMessage.className = 'validation-message error';
+                }
+            } else {
+                validationMessage.innerHTML = '';
+                validationMessage.className = 'validation-message';
+            }
+        }
+
+        // Handle customer selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const customerSelect = document.getElementById('entryCustomer');
+            const newCustomerGroup = document.getElementById('newCustomerGroup');
+            
+            customerSelect.addEventListener('change', function() {
+                if (this.value === 'new') {
+                    newCustomerGroup.style.display = 'block';
+                } else {
+                    newCustomerGroup.style.display = 'none';
+                }
+            });
+            
+            // Add event listeners for amount validation
+            document.getElementById('salesAmount').addEventListener('input', updatePaymentFields);
+            document.getElementById('transferAmount').addEventListener('input', validatePaymentAmounts);
+            document.getElementById('cashAmount').addEventListener('input', validatePaymentAmounts);
+        });
+
+        function submitSalesEntry() {
+            // Validate required fields
+            const date = document.getElementById('entryDate').value;
+            const customer = document.getElementById('entryCustomer').value;
+            const newCustomer = document.getElementById('newCustomerName').value;
+            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+            const transferAmount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
+            const transferStatus = document.getElementById('transferStatus').value;
+            const useTransfer = document.getElementById('useTransfer').checked;
+            const useCash = document.getElementById('useCash').checked;
+            
+            // Validation
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            if (!customer || (customer === 'new' && !newCustomer)) {
+                alert('Please select or enter a customer name');
+                return;
+            }
+            
+            if (salesAmount <= 0) {
+                alert('Please enter a valid sales amount');
+                return;
+            }
+            
+            if (!useTransfer && !useCash) {
+                alert('Please select at least one payment method');
+                return;
+            }
+            
+            // Validate payment amounts
+            const total = transferAmount + cashAmount;
+            if (Math.abs(total - salesAmount) > 0.01) {
+                alert('Payment amounts must equal sales amount');
+                return;
+            }
+            
+            // Create entry
+            const finalCustomer = customer === 'new' ? newCustomer : customer;
+            const order = parseInt(document.getElementById('orderNumber').textContent);
+            
+            // Convert date to Thai format
+            const dateObj = new Date(date);
+            const day = dateObj.getDate();
+            const month = 'ก.ค.'; // Simplified for July
+            const year = '11'; // Thai year 2568
+            const thaiDate = `${day} ${month} ${year}`;
+            
+            const newEntry = {
+                order: order,
+                date: thaiDate,
+                shop: finalCustomer,
+                salesAmount: salesAmount,
+                transferAmount: transferAmount,
+                cashAmount: cashAmount,
+                transferStatus: transferStatus
+            };
+            
+            // Add to data
+            salesPaymentData.sampleData.unshift(newEntry);
+            
+            // Update table and stats
+            renderTable();
+            updateStats(salesPaymentData.sampleData);
+            
+            // Close modal
+            closeAddEntryModal();
+            
+            // Show success message
+            showSuccessMessage('Sales entry added successfully!');
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #27ae60;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                z-index: 1001;
+                font-weight: 600;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addEntryModal');
+            if (event.target === modal) {
+                closeAddEntryModal();
+            }
+        }
+
+        function exportToExcel() {
+            alert('Export functionality will be implemented with backend integration');
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>
