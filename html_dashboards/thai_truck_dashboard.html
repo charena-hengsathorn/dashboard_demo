@@ -65,6 +65,35 @@
             font-weight: 600;
         }
 
+        .breadcrumb {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: #3498db;
+        }
+
+        .breadcrumb-item.active {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .breadcrumb-separator {
+            color: #adb5bd;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -207,6 +236,12 @@
             <a href="thai_truck_dashboard.html" class="active">🚛 Truck Analysis</a>
             <a href="recycled_items_dashboard.html">🔄 Recycled Items</a>
             <a href="sales_payment_dashboard.html">💰 Sales & Payments</a>
+        </div>
+        
+        <div class="breadcrumb">
+            <a href="index.html" class="breadcrumb-item">Home</a>
+            <span class="breadcrumb-separator">></span>
+            <span class="breadcrumb-item active">Truck Analysis</span>
         </div>
 
         <!-- Key Statistics Cards -->

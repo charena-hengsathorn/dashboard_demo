@@ -45,6 +45,35 @@
             opacity: 0.9;
         }
 
+        .breadcrumb {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item:hover {
+            color: #3498db;
+        }
+
+        .breadcrumb-item.active {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .breadcrumb-separator {
+            color: #adb5bd;
+        }
+
         .content {
             padding: 40px;
         }
@@ -173,6 +202,10 @@
             <h1>📊 Dashboard Navigation</h1>
             <p>Choose your dashboard from the options below</p>
         </div>
+        
+        <div class="breadcrumb">
+            <span class="breadcrumb-item active">Home</span>
+        </div>
 
         <div class="content">
             <div class="folder-info">
@@ -203,9 +236,15 @@
                     </a>
 
                     <a href="recycled_items_dashboard.html" class="dashboard-card">
-                        <h3>🔄 Recycled Items Sales</h3>
-                        <p>Daily tracking dashboard for recycled materials sales with 21 categories including plastic bags, metal, glass, and more.</p>
+                        <h3>🔄 Recycled Items Management</h3>
+                        <p>Comprehensive dashboard for managing recycled materials including sales logs, purchase logs, and inventory tracking.</p>
                         <span class="status active">Active</span>
+                    </a>
+
+                    <a href="recycled_items_enhanced_dashboard.html" class="dashboard-card">
+                        <h3>🚀 Enhanced Recycled Items</h3>
+                        <p>Advanced analytics dashboard with predictive insights, environmental impact tracking, market analysis, and AI-powered forecasting.</p>
+                        <span class="status active">Enhanced</span>
                     </a>
 
                     <a href="sales_payment_dashboard.html" class="dashboard-card">
