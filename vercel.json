@@ -7,34 +7,34 @@
       "use": "@vercel/static"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/html_dashboards/index.html"
+      "src": "/",
+      "dest": "/html_dashboards/index.html"
     },
     {
-      "source": "/dashboard",
-      "destination": "/html_dashboards/recycled_items_enhanced_dashboard.html"
+      "src": "/dashboard",
+      "dest": "/html_dashboards/recycled_items_enhanced_dashboard.html"
     },
     {
-      "source": "/truck-dashboard",
-      "destination": "/html_dashboards/thai_truck_dashboard.html"
+      "src": "/truck-dashboard",
+      "dest": "/html_dashboards/thai_truck_dashboard.html"
     },
     {
-      "source": "/sales-log",
-      "destination": "/html_dashboards/recycled_items_sales_log.html"
+      "src": "/sales-log",
+      "dest": "/html_dashboards/recycled_items_sales_log.html"
     },
     {
-      "source": "/purchase-log",
-      "destination": "/html_dashboards/recycled_items_purchase_log.html"
+      "src": "/purchase-log",
+      "dest": "/html_dashboards/recycled_items_purchase_log.html"
     },
     {
-      "source": "/sales-payment",
-      "destination": "/html_dashboards/sales_payment_dashboard.html"
+      "src": "/sales-payment",
+      "dest": "/html_dashboards/sales_payment_dashboard.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/html_dashboards/$1"
+      "src": "/html_dashboards/(.*)",
+      "dest": "/html_dashboards/$1"
     }
   ],
   "headers": [
@@ -65,7 +65,5 @@
         }
       ]
     }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
