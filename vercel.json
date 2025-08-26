@@ -39,7 +39,7 @@
   ],
   "headers": [
     {
-      "source": "**/*.js",
+      "source": "/html_dashboards/**/*.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "source": "**/*.css",
+      "source": "/html_dashboards/**/*.css",
       "headers": [
         {
           "key": "Cache-Control",
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "source": "**/*.json",
+      "source": "/html_dashboards/**/*.json",
       "headers": [
         {
           "key": "Cache-Control",
