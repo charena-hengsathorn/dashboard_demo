@@ -56,3 +56,4 @@ Thumbs.db
 
 # JSON data files (if you don't want to track generated data)
 # *.json
+.vercel
